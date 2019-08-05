@@ -1,25 +1,29 @@
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Loader {
 
     private static String staffFile = "data/movementList.csv";
     private static String regex = "\"";
     private static String[] fragments;
-    private static List<Costs> costs = new ArrayList<>();
+    private static ArrayList<Costs> costs = new ArrayList<>();
+    private static double costSum = 0;
+    private static double profitSum = 0;
 
 
     public static void main(String[] args) {
         List<String> chart = loadFromFile();
+
+        System.out.println(costs.size());
+
 //        for (int i = 0; i < chart.size(); i++) {
 //            if (costs.size() == 0){
-//                costs.add(new Costs(costType(fragments[5]), Double.parseDouble(fragments[7])));
+//                costs.add(new Costs(clearCostType(fragments[5]), Double.parseDouble(fragments[7])));
 //            } else {
 //                for (int j = 0; j < costs.size(); j++) {
-//                    if (!costs.get(j).getCostType().equals(costType(fragments[5]))) {
-//                        costs.add(new Costs(costType(fragments[5]), Double.parseDouble(fragments[7])));
+//                    if (!costs.get(j).getCostType().equals(clearCostType(fragments[5]))) {
+//                        costs.add(new Costs(clearCostType(fragments[5]), Double.parseDouble(fragments[7])));
 //                    } else {
 //                        costs.get(j).setCostSize(costs.get(j).getCostSize() + Double.parseDouble(fragments[7]));
 //                    }
@@ -27,9 +31,6 @@ public class Loader {
 //            }
 //        }
 
-        System.out.println(chart.size());
-        System.out.println(costs.size());
-        costs.forEach(c -> System.out.println(c.getCostType() + " " + c.getCostSize()));
     }
 
     private static ArrayList<String> loadFromFile() {
@@ -40,19 +41,37 @@ public class Loader {
                 lines.set(i, replaceComma(lines.get(i), ' '));
             }
 
-            for (String line : lines) {
-                fragments = line.split(",");
+            for (int i = 1; i < lines.size(); i++) {
+                fragments = lines.get(i).split(",");
 
-                if (fragments.length != 8) {
-                    System.out.println("Wrong line: " + line);
-                    continue;
+                fragments[5] = clearCostType(fragments[5]);
+                double profit = Double.parseDouble(fragments[6].trim());
+                double cost = Double.parseDouble(fragments[7].trim());
+                costSum += cost;
+                profitSum += profit;
+
+                if (cost > 0) {
+                    if (costs.size() == 0) {
+                        costs.add(new Costs(fragments[5], cost));
+                    } else {
+                        boolean s = costs.stream()
+                                .anyMatch(o -> o.getCostType().equals(fragments[5]));
+
+                            if (s = false) {
+                                costs.add(new Costs(fragments[5], cost));
+                            } else {
+                                costs.get(j).setCostSize(costs.get(j).getCostSize() + cost);
+                            }
+                    }
                 }
 
-                movements.add(fragments[5] + fragments[6].trim() + fragments[7].trim());
+
+//                movements.add(fragments[5] + fragments[6].trim() + fragments[7].trim());
             }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+
         return movements;
     }
 
@@ -71,7 +90,7 @@ public class Loader {
         return String.valueOf(chars);
     }
 
-    public static String costType(String s) {
+    public static String clearCostType(String s) {
         return s.substring(20, 60);
     }
 

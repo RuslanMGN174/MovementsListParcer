@@ -24,7 +24,7 @@ public class LoaderTest extends TestCase {
         String[] fragments = lines.get(1).split(",");
 
         String s = fragments[5];
-        String actual = Loader.costType(s);
+        String actual = Loader.clearCostType(s);
         String expected = "809216  /RU/CARD2CARD ALFA_MOBILE>MOSCOW";
         System.out.println(s);
         assertEquals(expected, actual);

@@ -1,4 +1,4 @@
-public class Costs {
+public class Costs implements Comparable <Costs> {
     private String costType;
     private double costSize;
 
@@ -22,4 +22,15 @@ public class Costs {
     public void setCostSize(double costSize) {
         this.costSize = costSize;
     }
+
+
+    public String toString() {
+        return "Группа расходов: " + costType + " расходы на сумму: " + costSize;
+    }
+
+    @Override
+    public int compareTo(Costs o) {
+        return this.getCostType().equals(o.costType) ? 0 : -1;
+    }
+
 }
